@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Mail;
 
 namespace TodoApi.Controllers;
 
@@ -29,8 +31,23 @@ namespace TodoApi.Controllers;
                 using (var writer = new StreamWriter(filePath, append: true))
                 {
 
+                    SmtpClient client = new SmtpClient();
+                    client.Host = "smtp.ionos.com";
+                    client.Port = 587;
+                    client.UseDefaultCredentials = false;
+                    client.Credentials = new NetworkCredential("chris@southmountainwebsites.com", "0IKEL2cm1%8@2$4&Ac3");
+                    client.EnableSsl = true;
+
+                    MailMessage myMessage = new MailMessage();
+                    myMessage.From = new MailAddress("chris@southmountainwebsites.com");
+                    myMessage.To.Add("chris@southmountainwebsites.com");
+                    myMessage.Subject = "Incoming Contact From SouthMountainWebsites.com";
+                    myMessage.Body = "This is a test email sent using SMTP in ASP.NET C#.";
+
+
+
                     // Define the Los Angeles time zone
-                    TimeZoneInfo azTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+                    TimeZoneInfo azTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Phoenix");
 
                     // Get the current date and time in Los Angeles time zone
                     DateTimeOffset azTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, azTimeZone);
@@ -42,6 +59,15 @@ namespace TodoApi.Controllers;
                     writer.WriteLine($"Email: {email}");
                     writer.WriteLine($"Message: {message}");
                     writer.WriteLine();
+
+                    myMessage.Body = "Someone submitted their contact information on SouthMountainWebsites.com.\n";
+                    myMessage.Body += "Date: " + azTime.ToString() + "\n";
+                    myMessage.Body += "Name: " + name + "\n";
+                    myMessage.Body += "Email: " + email + "\n";
+                    myMessage.Body += "Message: " + message;
+
+                    client.Send(myMessage);
+
                 }
 
                 // Return a success response
