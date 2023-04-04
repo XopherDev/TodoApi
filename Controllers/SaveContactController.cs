@@ -28,8 +28,16 @@ namespace TodoApi.Controllers;
                 var filePath = "textfile.txt";
                 using (var writer = new StreamWriter(filePath, append: true))
                 {
+
+                    // Define the Los Angeles time zone
+                    TimeZoneInfo azTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+
+                    // Get the current date and time in Los Angeles time zone
+                    DateTimeOffset azTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, azTimeZone);
+
+
                     writer.WriteLine("--------------------------------");
-                    writer.WriteLine($"Date: {DateTime.Now}");
+                    writer.WriteLine($"Date: {DateTime.Now}/az: " + azTime.ToString());
                     writer.WriteLine($"Name: {name}");
                     writer.WriteLine($"Email: {email}");
                     writer.WriteLine($"Message: {message}");
