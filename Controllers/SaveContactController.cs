@@ -28,6 +28,8 @@ namespace TodoApi.Controllers;
                 var filePath = "textfile.txt";
                 using (var writer = new StreamWriter(filePath, append: true))
                 {
+                    writer.WriteLine("--------------------------------");
+                    writer.WriteLine($"Date: {DateTime.Now}");
                     writer.WriteLine($"Name: {name}");
                     writer.WriteLine($"Email: {email}");
                     writer.WriteLine($"Message: {message}");
