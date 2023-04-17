@@ -13,10 +13,12 @@ namespace TodoApi.Controllers;
     public class SaveContactController : Controller
     {
         private readonly ILogger<SaveContactController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public SaveContactController(ILogger<SaveContactController> logger)
+        public SaveContactController(ILogger<SaveContactController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -32,15 +34,16 @@ namespace TodoApi.Controllers;
                 {
 
                     SmtpClient client = new SmtpClient();
-                    client.Host = "smtp.ionos.com";
-                    client.Port = 587;
+                    client.Host = _configuration["MyAppInfo:useHost"];
+                    client.Port = Convert.ToInt32(_configuration["MyAppInfo:usePort"]);
                     client.UseDefaultCredentials = false;
-                    client.Credentials = new NetworkCredential("chris@southmountainwebsites.com", "0IKEL2cm1%8@2$4&Ac3");
+                    //client.Credentials = new NetworkCredential("chris@southmountainwebsites.com", "gtYDPwRVQ8x$");
+                    client.Credentials = new NetworkCredential(_configuration["MyAppInfo:useEmail"], _configuration["MyAppInfo:usePass"]);
                     client.EnableSsl = true;
 
                     MailMessage myMessage = new MailMessage();
-                    myMessage.From = new MailAddress("chris@southmountainwebsites.com");
-                    myMessage.To.Add("chris@southmountainwebsites.com");
+                    myMessage.From = new MailAddress(_configuration["MyAppInfo:useEmail"]);
+                    myMessage.To.Add(_configuration["MyAppInfo:useEmail"]);
                     myMessage.Subject = "Incoming Contact From SouthMountainWebsites.com";
                     myMessage.Body = "This is a test email sent using SMTP in ASP.NET C#.";
 
